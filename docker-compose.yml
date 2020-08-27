@@ -3,6 +3,10 @@ services:
   test:
     container_name: test
     build: .
+    volumes:
+      - .:/src
+    ports:
+      - 8081:8081
     depends_on:
       - redis
 

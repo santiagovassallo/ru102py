@@ -4,65 +4,28 @@ This is the sample application codebase for the Redis University course [RU102PY
 
 ## Setup
 
+Please note, this is my twist to the original code, since I wanted to be able to follow along the course using PyCharm
+and my local docker. As I currently using Ubuntu 18.04, with these aproach it doesn't matter that my SO has python 3.6,
+and I don't to install other applications. Docker will take care of them.
+
 ### Prerequisites
 
-To start and run this application, you will need:
-
-* [Python 3.8](https://www.python.org/downloads/) (**Note**: It must be version 3.8)
-* Access to a local or remote installation of [Redis](https://redis.io/download) version 5 or newer
-* Your Redis installation should have the RedisTimeSeries module installed. You can find the installation instructions at: https://oss.redislabs.com/redistimeseries/#setup
-
-**Note**: If you don't have Redis installed but do have Docker and want to get started quickly,
-run `make timeseries-docker`. This starts a Redis container with RedisTimeSeries installed.
+To start and run this application, you will need `docker` and `docker-compose`
 
 ### Setting up Python dependencies with make
 
 This project automates setting up its Python dependencies with `make`.
 
-To get started, run `make env`. This command creates a virtual environment
-and installs the project and its dependencies into the environment.
-
-### Setting up dependencies manually
-
-Follow the steps in this section if you want to manually set up the project.
-
-Note that the Makefile provides targets (e.g. `make all`, `make backend_dev`,
-and `make frontend_dev`) that automate everything you should need to do, so
-manually setting up the project is not necessary.
+But you donn have to worry about this, because docker will make it for you.
 
 #### Virtualenv
 
-If you want to create a virtualenv manually instead of using `make env`, run the
-following command from the base directory of the project:
+As the project run inside a container, we don't need a virtual env, so it doesn't exist here.
 
-    python3.8 -m venv env
+### Redis and RedisTimeSeries
 
-#### Dependencies
-
-Before installing dependencies, activate the virtualenv:
-
-    source env/bin/activate
-
-Install the app and its dependencies by running the following command from the
-base directory of the project:
-
-    pip install -e .
-
-### Redis
-
-This project requires a connection to Redis. The default settings expect Redis
-to run on localhost at port 6379 without password protection.
-
-#### RedisTimeSeries
-
-This project uses the RedisTimeSeries module. You can either install it manually
-or run Redis with the module enabled using Docker.
-
-Check the project's web site for installation instructions: https://oss.redislabs.com/redistimeseries/
-
-**Note**: As mentioned earlier in this document, if you have Docker installed and want to get started quickly, run
-`make timeseries-docker`, which starts a Docker container running Redis with the
-RedisTimeSeries module enabled.
+This project requires a connection to Redis and uses the RedisTimeSeries module, but once again, docker-compose will
+care about that.
 
 #### Username and password protection
 
@@ -115,6 +78,18 @@ option in the following files:
 - `redisolar/instance/dev.cfg`
 - `redisolar/instance/testing.cfg`
 
+## Running the project
+
+To run the project just you just need to run docker-compose like this
+
+`docker-compose run --rm --service-ports test bash`
+
+This will open a terminal for you, where you can run all the following commands. Please note, as docker-compose will
+share the source code of the project through a volume, every change you make in the source files from your machine will
+be seen in the container.
+
+There is a convenience file in the project called `run.sh`. Just by doing `source run.sh` you can spin up the project.
+
 ## Loading sample data
 
 Before the example app will do anything interesting, it needs data.
@@ -146,27 +121,19 @@ order to see sites on the map, you'll need to do two things:
 
 If you need to override command-line flags when running Flask, you can use the `flask` command to run the dev server manually.
 
-To do, first activate the project's virtual environment:
+To run the `flask` command:
 
-    $ source env/bin/activate
+    $ FLASK_APP=redisolar flask run --port=8081
 
-Then run the `flask` command:
-
-    $ FLASK_APP=redisolar flask run --port=8001
-    
 ## Running tests
 
-You can run `make test` to run the unit tests. Doing so will build
-a virtualenv automatically if you have not already done so.
+You can run `make test` to run the unit tests.
 
 ### Running tests manually
 
-You can run individual tests by calling `pytest` manually. To do, first activate the project's virtual environment:
+You can run individual tests by calling `pytest` manually. To do, run `pytest` with whatever options you want.
 
-    $ source env/bin/activate
-    
-Then run `pytest` with whatever options you want. For example, here is how you
-run a specific test:
+For example, here is how you run a specific test:
 
     $ pytest -k test_set_get
 
@@ -184,14 +151,14 @@ You might see an error like this (or many of them) when you try to run the
 tests:
 
     ERROR tests/scripts/test_update_if_lowest.py::test_update_if_lowest_unchanged - redis.exceptions.ConnectionError: Error 61 connecting to localhost:6379. Connection refused.
-   
+
 The error is telling you that Redis is not running on port 6379. Make sure
 you've started Redis -- exactly how to do so depends on your operation system
 and the way you installed Redis. For example, if you installed via Homebrew on a
 Mac, the command is:
 
-    brew services start redis 
-   
+    brew services start redis
+
 ### Why do I get an "Authentication required" error when I try to run the tests/dev server?
 
 Your Redis instance requires a username and/or password to connect. First, find
