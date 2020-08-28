@@ -2,6 +2,22 @@
 
 This is the sample application codebase for the Redis University course [RU102PY, Redis for Python Developers](https://university.redislabs.com/courses/ru102py/).
 
+And this fork is my particular twist to make it work just using `docker` and `docker-compose`. So, if you have them
+installed, you are all set to go! Just follow these steps:
+
+1. Clone the repository.
+1. If you want to run the app just type in your terminal `docker-compose up app`. Now you can go to
+http://127.0.0.1:8081 and see the app working.
+1. If you want to run the tests, `docker-compose up test`
+
+**And that's it!** The good news is that you can work on your favourite IDE and still keep your changes once you stop the
+containers, because the sources are shared through a volume.
+
+**Note**: You can still can run the project as in the original way, but if you want to do that, make sure you change
+the files `instance/dev.cfg` and `intance/testing.cfg` and set `REDIS_HOST = "localhost"` on both files.
+
+If you want to learn more about the project or the original way to run it, just keep reading.
+
 ## Setup
 
 ### Prerequisites
@@ -14,9 +30,6 @@ To start and run this application, you will need:
 
 **Note**: If you don't have Redis installed but do have Docker and want to get started quickly,
 run `make timeseries-docker`. This starts a Redis container with RedisTimeSeries installed.
-
-**Note on using docker**: If you want to follow along using `docker` and `docker-compose` take a look to the section
-[Running on Docker](#Running on Docker) near the bottom of this readme.
 
 ### Setting up Python dependencies with make
 
@@ -172,19 +185,6 @@ Then run `pytest` with whatever options you want. For example, here is how you
 run a specific test:
 
     $ pytest -k test_set_get
-
-## Running on Docker
-
-If you have Docker and docker-compose, you are all set to go! Just follow these steps:
-
-1. Clone the repository.
-1. Edit the files `instance/dev.cfg` and `intance/testing.cfg` and make sure to set `REDIS_HOST = "redis"` on both files.
-1. If you want to run the app just type in your terminal `docker-compose up app`.
-Now you can go to http://127.0.0.1:8081 and see the app working.
-1. If you want to run the tests, `docker-compose up test`
-
-The good news is that you can work on your favourite IDE and still keep your changes once you stop the containers,
- because the sources are shared through a volume.
 
 ## FAQ
 
