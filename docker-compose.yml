@@ -1,7 +1,7 @@
 version: "3"
 services:
-  test:
-    container_name: test
+  app:
+    container_name: app
     build: .
     volumes:
       - .:/src
@@ -9,8 +9,17 @@ services:
       - 8081:8081
     depends_on:
       - redis
+    command: ["./run_app.sh"]
+
+  test:
+    container_name: test
+    build: .
+    volumes:
+      - .:/src
+    depends_on:
+      - redis
+    command: ["pytest"]
 
   redis:
     container_name: redis
     image: redislabs/redistimeseries
-    restart: always
